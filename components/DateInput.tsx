@@ -15,14 +15,14 @@ export type Weeks = 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat';
 
 interface Props extends Omit<RProps, 'value' | 'onTextChange'> {
     weekStart?: Weeks,
-    value: Date,
+    value?: Date | null,
     onDateChange: (val: Date) => void,
     hideOutDays?: boolean,
     locale: RootState['locale']['data']['date'],
     holiday?: Weeks
 }
 
-const DateInput: React.FC<Props> = ({ weekStart = 'sun', value, onDateChange, hideOutDays = false, locale, holiday }) => {
+const DateInput: React.FC<Props> = ({ weekStart = 'sun', value, onDateChange, hideOutDays = false, locale, holiday, ...rest}) => {
     const days = useMemo(() => ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'], []);
     const weekStartIndex = useMemo(() => days.findIndex(day => day === weekStart), [days, weekStart]);
     const holidayPosition = useMemo(() => {
@@ -205,8 +205,11 @@ const DateInput: React.FC<Props> = ({ weekStart = 'sun', value, onDateChange, hi
     }, [state.value, value]);
 
     const inputValue = useCallback((months: string[]) => {
-        const date = value;
-        return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+        if (!value) {
+            return '';
+        }
+        
+        return `${months[value.getMonth()]} ${value.getDate()}, ${value.getFullYear()}`;
     }, [value]);
 
     const { width } = state;
@@ -215,7 +218,7 @@ const DateInput: React.FC<Props> = ({ weekStart = 'sun', value, onDateChange, hi
     return (
         <>
             <BaseInput
-                {...{ value, onDateChange, hideOutDays, locale, holiday }}
+                {...rest}
                 value={value ? inputValue(months) : ''}
                 onTextChange={() => { }}
                 rightIcon="calendar"

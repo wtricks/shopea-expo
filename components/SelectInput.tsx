@@ -16,11 +16,11 @@ interface Props<T> extends Partial<RProps> {
     selected?: string
 }
 
-export default function SelectInput<T>({ options, onSelected, listItemRender, isSelected, selected, ...props}: Props<T>) {
+export default function SelectInput<T>({ options, onSelected, listItemRender, isSelected, selected, ...props }: Props<T>) {
     const [value, setValue] = useState(selected || '')
     const [focus, setFocus] = useState(false)
     const [maxHeight, setMaxHeight] = useState(rem(260))
-    
+
     const isInitial = useRef(true)
 
     // Animation values
@@ -49,7 +49,7 @@ export default function SelectInput<T>({ options, onSelected, listItemRender, is
     }, []);
 
     const onSelectItem = (item: T) => {
-        setFocus(false);
+        toggleFocus();
         setValue(listItemRender(item));
         onSelected(item);
     }
@@ -63,10 +63,10 @@ export default function SelectInput<T>({ options, onSelected, listItemRender, is
                 pressed && { opacity: 0.5 }
             ]}
         >
-            <TextWithoutLocale 
-                type={isSelected(item) ? "bodyBoldMd" : "bodyRegularMd" }
-                color={isSelected(item) ? 'primary' : 'grey'} 
-                value={listItemRender(item)} 
+            <TextWithoutLocale
+                type={isSelected(item) ? "bodyBoldMd" : "bodyRegularMd"}
+                color={isSelected(item) ? 'primary' : 'grey'}
+                value={listItemRender(item)}
             />
         </Pressable>
     )
@@ -90,15 +90,15 @@ export default function SelectInput<T>({ options, onSelected, listItemRender, is
                 contentStyle={{ borderColor: props.error ? Colors.error : focus ? Colors.primary : Colors.border }}
             />
 
-            {focus && (
-                <Animated.View style={[styles.listContainer, animatedStyle]}>
-                    <FlatList 
+            <Animated.View style={[styles.listContainer, animatedStyle]}>
+                {focus && (
+                    <FlatList
                         data={options}
                         renderItem={renderItem}
                         keyExtractor={listItemRender}
                     />
-                </Animated.View>
-            )}
+                )}
+            </Animated.View>
         </>
     )
 }
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         marginTop: rem(5),
         borderWidth: 1,
         borderColor: Colors.border,
-        borderRadius:  rem(8)
+        borderRadius: rem(8)
     },
     listConatinerItem: {
         borderBottomWidth: 1,
