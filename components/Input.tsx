@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { GestureResponderEvent, TextInput as RNTextInput, StyleProp, StyleSheet, TextInputProps, View, ViewStyle, Pressable, NativeSyntheticEvent, TextInputFocusEventData } from "react-native";
+import { useState, forwardRef } from 'react';
+import { GestureResponderEvent, TextInput as RNTextInput, StyleProp, StyleSheet, TextInputProps, View, ViewStyle, NativeSyntheticEvent, TextInputFocusEventData } from 'react-native';
 
 import { TextWithoutLocale } from "~/components/Text";
 import IconButton from "~/components/IconButton";
@@ -13,7 +13,7 @@ import type { Props as IconProps } from '~/components/Icon'
 import type { Props as IconButtonProps } from '~/components/IconButton'
 
 export interface Props extends TextInputProps {
-    value?: string,
+    value: string,
     placeholder?: string,
     label?: string,
     leftIcon?: IconName,
@@ -28,7 +28,7 @@ export interface Props extends TextInputProps {
     contentStyle?: StyleProp<ViewStyle>
 }
 
-export default function Input({
+const Input = forwardRef<RNTextInput, Props>(({
     value,
     containerStyle,
     contentStyle,
@@ -44,7 +44,7 @@ export default function Input({
     rightIconProps,
     error,
     ...rest
-}: Props) {
+}, ref) => {
     const [focus, setFocus] = useState(false);
 
     const onInputFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
@@ -89,6 +89,7 @@ export default function Input({
 
                 <RNTextInput
                     {...rest}
+                    ref={ref}
                     value={value}
                     onChangeText={onTextChange}
                     selectionColor={Colors.primary}
@@ -121,7 +122,7 @@ export default function Input({
             {!!error && <TextWithoutLocale style={styles.errorText} value={error} type="bodyBoldSm" color="error" />}
         </View>
     );
-}
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -150,3 +151,5 @@ const styles = StyleSheet.create({
         marginLeft: rem(5),
     }
 });
+
+export default Input;
