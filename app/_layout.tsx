@@ -1,37 +1,44 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { Stack, router } from "expo-router";
+import { useCallback } from "react";
+import { useFonts } from "expo-font";
+import { Provider } from "react-redux";
+import {
+    SafeAreaProvider,
+    initialWindowMetrics,
+} from "react-native-safe-area-context";
+import {
+    hideAsync,
+    preventAutoHideAsync
+} from "expo-splash-screen";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { store } from "~/store";
+import { FontFamily } from "~/constants/Theme";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+preventAutoHideAsync();
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+export default function App() {
+    const [fontsLoaded, error] = useFonts(FontFamily);
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    const onReady = useCallback(async () => {
+        if (fontsLoaded && !error) {
+            await hideAsync();
+
+            router.push('(auth)/signin')
+        }
+    }, [fontsLoaded, error]);
+
+    if (!fontsLoaded || error) {
+        hideAsync();
+        return null;
     }
-  }, [loaded]);
 
-  if (!loaded) {
-    return null;
-  }
-
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
-  );
+    return (
+        <SafeAreaProvider initialMetrics={initialWindowMetrics} onLayout={onReady}>
+            <Provider store={store}>
+                <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="+not-found" />
+                </Stack>
+            </Provider>
+        </SafeAreaProvider>
+    )
 }
