@@ -11,8 +11,7 @@ export interface Props extends TextProps {
 
 export default function Text({ value, color, type, style, ...rest }: Props) {
     const locale = useLocale();
-    console.log(value)
-
+    
     return (
         <RNText 
             style={[
