@@ -1,14 +1,12 @@
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet } from "react-native";
 import { Tabs } from "expo-router";
 
 import { TextWithoutLocale } from "~/components/Text";
-import IconButton from "~/components/IconButton";
+import Icon from "~/components/Icon";
 
 import { IconName } from "~/assets/icons/info";
 import { Colors } from "~/constants/Theme";
 import { rem } from "~/utils/metric";
-import { StyleSheet } from "react-native";
-import { useCallback } from "react";
 
 type TabType = {
     name: string,
@@ -63,47 +61,41 @@ const TabData: TabType[] = [
 ]
 
 export default function TabsLayout() {
-    const dummyFn = useCallback(() => { }, [])
-
     return (
-        <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
-            <Tabs
-                screenOptions={{
-                    tabBarActiveTintColor: Colors.primary,
-                    headerShown: false,
-                    tabBarLabel({ focused, children }) {
-                        return (
-                            <TextWithoutLocale
-                                type={focused ? "captionBoldXs" : "captionRegularXs"}
-                                color={focused ? "primary" : "grey"}
-                                value={children}
+        <Tabs
+            screenOptions={{
+                tabBarActiveTintColor: Colors.primary,
+                headerShown: false,
+                tabBarLabel({ focused, children }) {
+                    return (
+                        <TextWithoutLocale
+                            type={focused ? "captionBoldXs" : "captionRegularXs"}
+                            color={focused ? "primary" : "grey"}
+                            value={children}
+                        />
+                    )
+                },
+                tabBarStyle: styles.tabBarStyle,
+                tabBarHideOnKeyboard: true
+            }}>
+
+            {TabData.map(({ name, label, icon }) => (
+                <Tabs.Screen
+                    key={name}
+                    name={name}
+                    options={{
+                        title: label,
+                        tabBarIcon: ({ focused }) => (
+                            <Icon
+                                size={22}
+                                name={focused ? icon.selected : icon.default}
+                                color={focused ? 'primary' : 'grey'}
                             />
                         )
-                    },
-                    tabBarStyle: styles.tabBarStyle,
-                    tabBarHideOnKeyboard: true
-                }}>
-
-                {TabData.map(({ name, label, icon }) => (
-                    <Tabs.Screen
-                        key={name}
-                        name={name}
-                        options={{
-                            title: label,
-                            tabBarIcon: ({ focused }) => (
-                                <IconButton
-                                    size={30}
-                                    icon={focused ? icon.selected : icon.default}
-                                    color={focused ? 'primary' : 'grey'}
-                                    onPress={dummyFn}
-                                    tochable="all"
-                                />
-                            )
-                        }}
-                    />
-                ))}
-            </Tabs>
-        </SafeAreaView>
+                    }}
+                />
+            ))}
+        </Tabs>
     )
 }
 
