@@ -36,6 +36,7 @@ export default function App() {
         <SafeAreaProvider initialMetrics={initialWindowMetrics} onLayout={onReady}>
             <Provider store={store}>
                 <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="(tabs)" />
                     <Stack.Screen name="+not-found" />
                 </Stack>
             </Provider>
